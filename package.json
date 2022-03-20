@@ -9,9 +9,11 @@
     "axios": "^0.26.1",
     "dot-env": "^0.0.1",
     "dotenv": "^16.0.0",
+    "places.js": "^1.19.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "5.0.0",
+    "use-local-storage": "^2.3.6",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

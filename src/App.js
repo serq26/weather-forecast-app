@@ -1,16 +1,15 @@
 import "./App.css";
-import Dropdown from "./components/Dropdown";
-import Weather from "./components/Weather";
+import Container from "./components/Container";
+import { BackgroundProvider } from "./contexts/BackgroundContext";
 import { WeatherProvider } from "./contexts/WeatherContext";
 
 function App() {
   return (
-    <div className="App">
+    <BackgroundProvider>
       <WeatherProvider>
-        <Dropdown />
-        <Weather />
+        <Container />
       </WeatherProvider>
-    </div>
+    </BackgroundProvider>
   );
 }
 

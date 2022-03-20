@@ -1,15 +1,19 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useWeather } from "../contexts/WeatherContext";
+import { useBackground } from "../contexts/BackgroundContext";
 
 export default function Weather() {
   const { city } = useWeather();
+
+  const { background, setBackground} = useBackground();
 
   const [isLoading, setIsLoading] = useState(false);
 
   const [weather, setWeather] = useState([]);
 
-  //   const apiKey = "bl0KBNwx78O3O6lHLWp1T0wz8AvTncpu";
+  // const [background, setBackground] = useState("clear");
+
   const apiKey = "6f1c505aebdb5646c9fe4d48210178fc";
 
   const getCityData = async () => {
@@ -27,9 +31,12 @@ export default function Weather() {
     const cityData = await getCityData();
 
     await axios(
-      `https://api.openweathermap.org/data/2.5/onecall?lat=${cityData.lat}&lon=${cityData.lon}&exclude=current,minutely,hourly,alerts&&units=metric&appid=${apiKey}`
+      `https://api.openweathermap.org/data/2.5/onecall?lat=${cityData.lat}&lon=${cityData.lon}&exclude=minutely,hourly,alerts&&units=metric&appid=${apiKey}`
     )
-      .then((res) => setWeather(res.data.daily))
+      .then((res) => {
+        setWeather(res.data.daily)
+        setBackground(res.data.current.weather[0].main.toLowerCase());
+      })
       .catch((e) => console.log(e))
       .finally(() => setIsLoading(false));
   };
@@ -37,6 +44,8 @@ export default function Weather() {
   useEffect(() => {
     getWeather();
   }, [city]);
+
+  console.log(background);
 
   const now = new Date(); // now
   now.setHours(13);
@@ -54,12 +63,17 @@ export default function Weather() {
             key={index}
             className={`forecast-day ${today === value.dt ? "today" : ""}`}
           >
+            <p className="day-date">
+              {new Date(value.dt * 1000).toLocaleDateString("en", {
+                day: 'numeric' ,
+                month: 'numeric', 
+              })}
+            </p>
             <p className="day-title">
               {new Date(value.dt * 1000).toLocaleDateString("en", {
                 weekday: "short",
               })}
             </p>
-            <p>{value.dt}</p>
             <img
               src={`https://openweathermap.org/img/w/${value.weather[0].icon}.png`}
               alt={value.weather[0].icon}
@@ -70,7 +84,7 @@ export default function Weather() {
                 <sup>°</sup>
               </div>
               <div className="min-temp">
-                {value.temp.max.toFixed(0)}
+                {value.temp.min.toFixed(0)}
                 <sup>°</sup>
               </div>
             </div>

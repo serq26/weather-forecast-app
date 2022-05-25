@@ -15,12 +15,13 @@ export default function Weather() {
   const apiKey = "6f1c505aebdb5646c9fe4d48210178fc";
 
   const getCityData = async () => {
+    setIsLoading(true);
     const cityData = await axios(
       `http://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=5&appid=${apiKey}`
     )
       .then((res) => res.data[0])
       .catch((e) => console.log(e))
-      .finally(() => setIsLoading(false));
+      .finally(() => setTimeout(() => {setIsLoading(false)},1000));
 
     return cityData;
   };
@@ -35,23 +36,30 @@ export default function Weather() {
         setWeather(res.data.daily);
         setBackground(res.data.current.weather[0].main.toLowerCase());
       })
-      .catch((e) => console.log(e))
-      .finally(() => setIsLoading(false));
+      .catch((e) => console.log(e));
   };
+
+  const getTodayDate = () => {
+    const now = new Date();
+    now.setHours(13);
+    now.setMinutes(0);
+    now.setSeconds(0);
+  
+    const today = Math.floor(now / 1000);
+    // console.log(today);
+    return today;
+  }
 
   useEffect(() => {
     getWeather();
+    getTodayDate();
   }, [city]);
-
-  const now = new Date(); // now
-  now.setHours(13);
-  now.setMinutes(0);
-  now.setSeconds(0);
-
-  const today = Math.floor(now / 1000);
 
   return (
     <div className="container">
+      <div className={`${isLoading ? "loading" : "d-none"}`}>
+        <img src="../images/loading.gif" />
+      </div>
       <div className="row">
         <div className="col-xl-12">
           {isLoading && <div>Loading...</div>}
@@ -59,7 +67,7 @@ export default function Weather() {
             {weather.map((value, index) => (
               <div
                 key={index}
-                className={`forecast-day ${today === value.dt ? "today" : ""}`}
+                className={`forecast-day ${getTodayDate() === value.dt ? "today" : ""}`}
               >
                 <p className="day-date">
                   {new Date(value.dt * 1000).toLocaleDateString("en", {

@@ -2,12 +2,12 @@ import { useWeather } from "../contexts/WeatherContext";
 
 export default function Dropdown() {
   const { city, setCity } = useWeather();
-  
+
+
   return (
     <div className="container">
       <div className="row">
         <div className="col-xl-12">
-          
           <select
             name="cities"
             value={city}
